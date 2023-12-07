@@ -9,6 +9,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "@typescript-eslint/semi": "off"
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/consistent-type-imports": "off"
   }
 }
