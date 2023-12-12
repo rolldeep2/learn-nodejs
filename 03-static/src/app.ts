@@ -1,15 +1,15 @@
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
+import path from 'path';
 
 const port = 8090;
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan('dev')); // static 파일은 로깅하지 않으려면 아래로 내림
 
-app.get('/', (req, res) => {
-  return res.send('Hello, NodeJs');
-});
+// static, /var/www ...
+app.use('/public', express.static(path.join(__dirname, 'public'))); // path separator OS별로 자동으로 해줌
 
 app.use((req, res) => {
   return res.status(404).send('Not Found');
