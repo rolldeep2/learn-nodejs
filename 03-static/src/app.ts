@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import path from 'path';
+import { engine } from 'express-handlebars';
 
 const port = 8090;
 
@@ -10,6 +11,14 @@ app.use(morgan('dev')); // static 파일은 로깅하지 않으려면 아래로 
 
 // static, /var/www ...
 app.use('/public', express.static(path.join(__dirname, 'public'))); // path separator OS별로 자동으로 해줌
+
+app.engine('.hbs', engine({ extname: '.hbs' })); // 확장자를 바꿀수있음!
+app.set('view engine', '.hbs');
+app.set('views', './src/views');
+
+app.get('/', (req, res) => {
+  res.render('home', { layout: false, message: 'Hello Handlebars!!!' }); // server side rendering
+});
 
 app.use((req, res) => {
   return res.status(404).send('Not Found');

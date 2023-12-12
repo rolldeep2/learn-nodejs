@@ -12,6 +12,7 @@
     "@typescript-eslint/semi": "off",
     "@typescript-eslint/consistent-type-imports": "off",
     "@typescript-eslint/member-delimiter-style": "off",
-    "@typescript-eslint/comma-dangle": "off"
+    "@typescript-eslint/comma-dangle": "off",
+    "@typescript-eslint/no-misused-promises": "off"
   }
 }
