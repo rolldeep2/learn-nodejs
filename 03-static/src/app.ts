@@ -17,7 +17,7 @@ app.set('view engine', '.hbs');
 app.set('views', './src/views');
 
 app.get('/', (req, res) => {
-  res.render('home', { layout: false, message: 'Hello Handlebars!!!' }); // server side rendering
+  res.render('home', { layout: false, message: { a: 1, b: 2 } }); // server side rendering
 });
 
 app.use((req, res) => {
