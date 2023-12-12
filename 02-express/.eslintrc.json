@@ -10,6 +10,8 @@
   },
   "rules": {
     "@typescript-eslint/semi": "off",
-    "@typescript-eslint/consistent-type-imports": "off"
+    "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/comma-dangle": "off"
   }
 }

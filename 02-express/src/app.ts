@@ -8,7 +8,36 @@ const app = express();
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  return res.send('Hello Express!');
+  interface ICloth {
+    top: string;
+    bottom: string;
+    socks: string | null;
+    hat?: string | null;
+  }
+  interface IUser {
+    id: number;
+    name: string;
+    age: number;
+    job: string;
+    hairColor?: string;
+    isGlasses: boolean;
+    cloth: ICloth;
+  }
+
+  const fisrtUser: IUser = {
+    id: 1,
+    name: '이영우',
+    age: 28,
+    job: 'Developer',
+    isGlasses: true,
+    cloth: {
+      top: 'Black Hooded zip-up',
+      bottom: 'Red Checked Pants',
+      socks: 'Black',
+    },
+  };
+
+  return res.send(fisrtUser);
 });
 
 app.use((req, res) => {
