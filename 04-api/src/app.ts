@@ -1,12 +1,20 @@
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
-// 인터페이스 같은 페이지에 할거면 최상단
-interface IUser {
+
+interface IProduct {
   id: number;
-  nickname: string;
+  name: string;
+  price: number;
+  type: string;
+  amount: number;
 }
 
-let users: IUser[] = [];
+interface ICart {
+  products: IProduct[];
+  totalPrice: number;
+}
+
+const cart: ICart = { products: [], totalPrice: 0 };
 
 const port = 8090;
 
@@ -16,114 +24,120 @@ app.use(express.json());
 
 app.use(morgan('dev'));
 
-app.get('/users', (req, res) => {
-  return res.json({ users });
+app.get('/cart', (req, res) => {
+  let totalPrice = 0;
+  cart.products.forEach((product) => {
+    totalPrice += product.price * product.amount;
+  });
+
+  cart.totalPrice = totalPrice;
+
+  return res.json({ cart });
 });
 
-interface ICreateUser extends Request {
-  body: { nickname?: string };
+interface ICreateProduct extends Request {
+  body: { name: string; price: string; type: string; amount: string };
 }
 
-app.post('/users', (req: ICreateUser, res) => {
-  const nickname = req.body.nickname?.trim();
+app.post('/cart', (req: ICreateProduct, res) => {
+  const name: string = req.body.name?.trim() ?? '';
+  const price: number = parseInt(req.body?.price);
+  const type: string = req.body.type?.trim() ?? '';
+  const amount: number = parseInt(req.body.amount);
 
-  if (!nickname) {
+  if (!name || !type || isNaN(price) || isNaN(amount)) {
     return res.status(400).send('Bad Request');
   }
 
-  const isExistsNickName = users.find((user) => user.nickname === nickname);
+  const isExistsProduct = cart.products.find(
+    (product) => product.name === name && product.type === type && product.price === price
+  );
 
-  if (isExistsNickName) {
-    return res.status(400).send('Bad Request');
+  if (isExistsProduct) {
+    isExistsProduct.amount += amount;
+    return res.status(201).json(isExistsProduct);
+  } else {
+    const id = cart.products.length ? cart.products[cart.products.length - 1].id + 1 : 1;
+    const product: IProduct = { id, name, price, type, amount };
+    cart.products = [...cart.products, product];
+    return res.status(201).json(product);
   }
-
-  const id = users.length ? users[users.length - 1].id + 1 : 1;
-
-  const user: IUser = { id, nickname };
-
-  users = [...users, user];
-
-  return res.status(201).json(user); // create 하면 201번
 });
 
-interface IFindUser extends Request {
-  params: { id: string };
+interface IFindProduct extends Request {
+  params: { name: string };
 }
 
-app.get('/users/:id', (req: IFindUser, res) => {
-  const id = parseInt(req.params.id);
+app.get('/cart/:name', (req: IFindProduct, res) => {
+  const name = req.params.name?.trim();
 
-  if (isNaN(id)) {
-    return res.status(400).send('Bad Request');
+  if (!name) {
+    return res.status(400).send('Bad Re1quest');
   }
 
-  const findUser = users.find((user) => user.id === id);
+  const findProduct = cart.products.find((product) => product.name === name);
 
-  if (!findUser) {
+  if (!findProduct) {
     return res.status(404).send('Not Found');
   }
 
-  return res.json(findUser); // status 가 없으면 200번.
+  return res.json(findProduct);
 });
 
-interface IUpdateUser extends Request {
+interface IUpdateProduct extends Request {
   params: { id: string };
-  body: { nickname?: string };
+  body: { name?: string; price: string; type?: string; amount: string }; // price랑 amount에 ?를 넣으면 아래 parseInt에서 빨간줄이 그이넹..
 }
 
-app.put('/users/:id', (req: IUpdateUser, res) => {
+app.put('/cart/:id', (req: IUpdateProduct, res) => {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
-    return res.status(400).send('Bad Request');
+    return res.status(400).send('Bad Re1quest');
   }
 
-  const nickname = req.body.nickname?.trim();
+  const name = req.body.name?.trim();
+  const price: number = parseInt(req.body?.price);
+  const type: string = req.body.type?.trim() ?? '';
+  const amount: number = parseInt(req.body.amount);
 
-  if (!nickname) {
-    return res.status(400).send('Bad Request');
+  if (!name || isNaN(price) || !type || isNaN(amount)) {
+    return res.status(400).send('Bad R2equest');
   }
 
-  const isExistsNickName = users.find((user) => user.nickname === nickname);
+  const findProduct = cart.products.find((product) => product.id === id);
 
-  if (isExistsNickName) {
-    return res.status(400).send('Bad Request');
+  if (!findProduct) {
+    return res.status(404).send('Not Found');
   }
 
-  const findUser = users.find((user) => user.id === id);
-
-  if (!findUser) {
-    return res.status(404).send('Not found');
-  }
-
-  users = users.map((user) => {
-    return user.id === findUser.id ? { ...user, nickname } : user; // user 풀고, nickname을 덮어씀.
+  cart.products = cart.products.map((product) => {
+    return product.id === findProduct.id ? { ...product, name, price, type, amount } : product;
   });
 
-  return res.status(204).json({}); // response가 없을땐 204번.
+  return res.status(204).json({}); // 빼먹었음.. 204번 추가해야함!
 });
 
-interface IDeleteUser extends Request {
+interface IDeleteProduct extends Request {
   params: { id: string };
 }
 
-app.delete('/users/:id', (req: IDeleteUser, res) => {
-  // request가 인터페이스랑 안맞으면, 일단은 그냥 통과됨. 나중에 DTO에서 처리해야하는 부분
+app.delete('/cart/:id', (req: IDeleteProduct, res) => {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res.status(400).send('Bad Request');
   }
 
-  const findUser = users.find((user) => user.id === id);
+  const findProduct = cart.products.find((product) => product.id === id);
 
-  if (!findUser) {
-    return res.status(404).send('Not found'); // 보안상 안알려줄수도 있다.
+  if (!findProduct) {
+    return res.status(404).send('Not Found');
   }
 
-  users = users.filter((user) => user.id !== findUser.id); // params로 받은 id와 다른 유저는 걸러냄.
+  cart.products = cart.products.filter((product) => product.id !== id);
 
-  return res.status(204).json({});
+  return res.status(204).send({});
 });
 
 app.use((req, res) => {
@@ -139,5 +153,3 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.listen(port, () => {
   console.log(`Listening and serving HTTP on :${port}`);
 });
-
-// crud 주말에 또 한번 만들어보기. users 말고 하나 만들어보자. Rest Client도 사용해보자.
