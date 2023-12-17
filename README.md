@@ -6,6 +6,6 @@
 * [Express](https://github.com/expressjs/express,'Express')
 * [Nodemon](https://github.com/remy/nodemon,'Nodemon')
 * [Morgan](https://github.com/expressjs/morgan,'Morgan')
-* [RestClient](https://github.com/Huachao/vscode-restclient,'RestClient')
+* [RESTClient](https://github.com/Huachao/vscode-restclient,'RESTClient')
 * [Axios](https://axios-http.com/,'Axios')
 
