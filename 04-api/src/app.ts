@@ -86,23 +86,23 @@ app.get('/cart/:name', (req: IFindProduct, res) => {
 
 interface IUpdateProduct extends Request {
   params: { id: string };
-  body: { name?: string; price: string; type?: string; amount: string }; // price랑 amount에 ?를 넣으면 아래 parseInt에서 빨간줄이 그이넹..
+  body: { name?: string; price?: string; type?: string; amount: string }; // price랑 amount에 ?를 넣으면 아래 parseInt에서 빨간줄이 그이넹..
 }
 
 app.put('/cart/:id', (req: IUpdateProduct, res) => {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
-    return res.status(400).send('Bad Re1quest');
+    return res.status(400).send('Bad Request');
   }
 
   const name = req.body.name?.trim();
-  const price: number = parseInt(req.body?.price);
-  const type: string = req.body.type?.trim() ?? '';
-  const amount: number = parseInt(req.body.amount);
+  const price = parseInt(req.body?.price ?? '0');
+  const type = req.body.type?.trim() ?? '';
+  const amount = parseInt(req.body.amount ?? '0'); // parseInt가 string만 받아서.. (위 문제 해결!)
 
   if (!name || isNaN(price) || !type || isNaN(amount)) {
-    return res.status(400).send('Bad R2equest');
+    return res.status(400).send('Bad Request');
   }
 
   const findProduct = cart.products.find((product) => product.id === id);
