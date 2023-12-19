@@ -1,0 +1,34 @@
+GET http://localhost:8090/cart
+
+###
+
+POST http://localhost:8090/cart
+content-type: application/json
+
+{
+  "name":"tofu",
+  "price":1000,
+  "type":"Food",
+  "amount":5
+
+}
+
+###
+
+GET http://localhost:8090/cart/tofu
+
+###
+
+PUT http://localhost:8090/cart/1
+Content-Type: application/json
+
+{
+  "name":"beef",
+  "price":30000,
+  "type":"Food",
+  "amount":1
+}
+
+###
+
+DELETE http://localhost:8090/cart/1

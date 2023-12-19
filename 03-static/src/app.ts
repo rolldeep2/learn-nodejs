@@ -17,7 +17,9 @@ app.set('view engine', '.hbs');
 app.set('views', './src/views');
 
 app.get('/', (req, res) => {
-  res.render('home', { layout: false, message: { a: 1, b: 2 } }); // server side rendering
+  req.body.pice;
+
+  res.render('home', { layout: false, message: { a: 1, b: req.body.pice } }); // server side rendering
 });
 
 app.use((req, res) => {
