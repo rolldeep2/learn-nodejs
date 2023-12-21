@@ -1,0 +1,43 @@
+body {
+  padding: 20px;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+form {
+  margin-top: 20px;
+}
+
+form > button {
+  margin-left: 10px;
+}
+
+.delete-container {
+  margin-top: 20px;
+}
+
+.delete-container > .selection {
+  margin-right: 10px;
+}
+
+ul {
+  margin-top: 20px;
+}
+
+ul > li {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+li > span {
+  cursor: default;
+  margin-left: 10px;
+}
+
+li > button {
+  margin-left: 20px;
+}

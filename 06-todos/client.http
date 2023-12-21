@@ -1,0 +1,31 @@
+GET http://localhost:8090/todos
+
+###
+
+POST http://localhost:8090/todos
+Content-Type: application/json
+
+{
+  "content":"Created Todo"
+}
+
+###
+
+DELETE http://localhost:8090/todos?ids=
+
+###
+
+PATCH http://localhost:8090/todos/1/content
+Content-Type: application/json
+
+{
+  "content":"Updated Todo"
+}
+
+###
+PATCH http://localhost:8090/todos/1/completion
+Content-Type: application/json
+
+{
+  "isComplete": true
+}

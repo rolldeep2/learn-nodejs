@@ -4,11 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/reset.css" />
-    <title>Home</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <title>Todos</title>
   </head>
   <body>
-    <h1>Hello HTML</h1>
+    <h1>Todos</h1>
 
+    <form>
+      <input type="text" required placeholder="Please enter what to do." />
+
+      <button>Create</button>
+    </form>
+
+    <div class="delete-container">
+      <button class="selection" hidden>Delete Selection</button>
+      <button class="all" hidden>Delete All</button>
+    </div>
+
+    <ul></ul>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/app.js"></script>
   </body>
 </html>
