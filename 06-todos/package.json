@@ -2,6 +2,7 @@
   "name": "06-todos",
   "version": "1.0.0",
   "scripts": {
+    "typecheck": "npx tsc",
     "dev": "nodemon src/app.ts"
   },
   "license": "MIT",

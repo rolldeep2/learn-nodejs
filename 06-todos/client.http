@@ -11,19 +11,19 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8090/todos?ids=
+DELETE http://localhost:8090/todos?ids=1,2,3
 
 ###
 
-PATCH http://localhost:8090/todos/1/content
+PATCH http://localhost:8090/todos/4/content
 Content-Type: application/json
 
 {
-  "content":"Updated Todo"
+  "content":"aaaaaa"
 }
 
 ###
-PATCH http://localhost:8090/todos/1/completion
+PATCH http://localhost:8090/todos/4/completion
 Content-Type: application/json
 
 {
