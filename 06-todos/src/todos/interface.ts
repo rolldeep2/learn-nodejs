@@ -4,6 +4,7 @@ export interface ITodo {
   id: number;
   content: string;
   isComplete: boolean;
+  order: number;
 }
 
 export interface IUpdateComplete extends Request {
@@ -22,4 +23,9 @@ export interface IDeleteTodos extends Request {
 export interface IUpdateContent extends Request {
   params: { id: string };
   body: { content?: string };
+}
+
+export interface IUpdateOrder extends Request {
+  params: { id: string };
+  body: { order?: number };
 }

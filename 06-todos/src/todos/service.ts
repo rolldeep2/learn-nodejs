@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { Request, Response } from 'express';
 
-import { ICreateTodo, IDeleteTodos, ITodo, IUpdateComplete, IUpdateContent } from './interface';
+import {
+  ICreateTodo,
+  IDeleteTodos,
+  ITodo,
+  IUpdateComplete,
+  IUpdateContent,
+  IUpdateOrder,
+} from './interface';
 
 // eslint-disable-next-line prefer-const
 let todos: ITodo[] = [];
 
 export const findTodos = (req: Request, res: Response) => {
+  todos = todos.sort((a, b) => a.order - b.order);
   return res.json({ todos });
 };
 
@@ -19,7 +27,7 @@ export const createTodo = (req: ICreateTodo, res: Response) => {
 
   const id = todos.length ? todos[todos.length - 1].id + 1 : 1;
 
-  const todo: ITodo = { id, content, isComplete: false };
+  const todo: ITodo = { id, content, isComplete: false, order: id };
 
   todos = [...todos, todo];
 
@@ -102,5 +110,28 @@ export const updateIsComplete = (req: IUpdateComplete, res: Response) => {
     return todo.id === findTodo.id ? { ...todo, isComplete } : todo;
   });
 
+  return res.status(204).json({});
+};
+
+export const updateOrder = (req: IUpdateOrder, res: Response) => {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).send('Bad Request');
+  }
+
+  const { order } = req.body;
+
+  if (order === undefined) {
+    return res.status(400).send('Bad Request');
+  }
+
+  const findTodo = todos.find((todo) => todo.id === id);
+
+  if (!findTodo) {
+    return res.status(404).send('Not Found');
+  }
+
+  findTodo.order = order;
   return res.status(204).json({});
 };

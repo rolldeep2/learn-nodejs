@@ -7,13 +7,64 @@ const todoList = document.querySelector('ul');
 
 let todos = [];
 
-const createTodo = (data) => {
+const createTodo = (data, todosLength) => {
   todos = [...todos, { ...data, isUpdate: false }];
+  todos = todos.sort((a, b) => a.order - b.order);
 
   const li = document.createElement('li');
   const input = document.createElement('input');
   const span = document.createElement('span');
   const button = document.createElement('button');
+
+  const upButton = document.createElement('button');
+  const donwButton = document.createElement('button');
+
+  upButton.innerText = 'Up';
+  upButton.classList.add('up');
+  donwButton.innerText = 'Down';
+  donwButton.classList.add('down');
+
+  const todoElements = todoList.querySelectorAll('li');
+  todoElements.forEach((todoElement) => {
+    todoElement.querySelector('.down').hidden = false;
+  });
+
+  upButton.hidden = todoElements.length === 0;
+  donwButton.hidden = true;
+
+  upButton.addEventListener('click', async () => {
+    try {
+      const index = todos.findIndex((todo) => todo.id === data.id);
+
+      if (index > 0) {
+        [todos[index], todos[index - 1]] = [todos[index - 1], todos[index]];
+
+        await axios.patch(`/todos/${todos[index].id}/order`, { order: todos[index].order + 1 });
+        await axios.patch(`/todos/${todos[index - 1].id}/order`, { order: todos[index].order });
+
+        todoList.insertBefore(todoList.childNodes[index], todoList.childNodes[index - 1]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  donwButton.addEventListener('click', async () => {
+    try {
+      const index = todos.findIndex((todo) => todo.id === data.id);
+
+      if (index < todosLength) {
+        [todos[index], todos[index + 1]] = [todos[index + 1], todos[index]];
+
+        await axios.patch(`/todos/${todos[index].id}/order`, { order: todos[index].order - 1 });
+        await axios.patch(`/todos/${todos[index + 1].id}/order`, { order: todos[index].order });
+
+        todoList.insertBefore(todoList.childNodes[index + 1], todoList.childNodes[index]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
 
   deleteAllButton.hidden = false;
 
@@ -68,6 +119,8 @@ const createTodo = (data) => {
 
   li.appendChild(input);
   li.appendChild(span);
+  li.appendChild(upButton);
+  li.appendChild(donwButton);
   li.appendChild(button);
 
   todoList.appendChild(li);
@@ -83,8 +136,9 @@ todoForm.addEventListener('submit', async (event) => {
 
     if (!selectedTodo && content) {
       const { data } = await axios.post('/todos', { content });
+      const todosLength = todos.length;
 
-      createTodo(data);
+      createTodo(data, todosLength);
 
       todoFormInput.value = '';
     }
@@ -159,9 +213,11 @@ deleteAllButton.addEventListener('click', async () => {
 const app = async () => {
   try {
     const { data } = await axios.get('/todos');
+    const todosLength = data.todos.length;
 
+    console.log(data);
     data.todos.forEach((todo) => {
-      createTodo(todo);
+      createTodo(todo, todosLength);
     });
 
     // some : 배열에 하나라도 true 일 때 true a.some(a => !a) : 하나라도 false인 것 을 찾음(true)

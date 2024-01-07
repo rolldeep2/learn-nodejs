@@ -1,5 +1,12 @@
 import { Router } from 'express';
-import { createTodo, deleteTodos, findTodos, updateContent, updateIsComplete } from './service';
+import {
+  createTodo,
+  deleteTodos,
+  findTodos,
+  updateContent,
+  updateIsComplete,
+  updateOrder,
+} from './service';
 
 const TodosRouter = Router();
 
@@ -22,6 +29,10 @@ TodosRouter.patch('/:id/content', (req, res) => {
 
 TodosRouter.patch('/:id/completion', (req, res) => {
   return updateIsComplete(req, res);
+});
+
+TodosRouter.patch('/:id/order', (req, res) => {
+  return updateOrder(req, res);
 });
 
 export default TodosRouter;
